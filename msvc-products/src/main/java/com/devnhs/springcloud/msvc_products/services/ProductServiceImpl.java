@@ -8,14 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ProductServiceImpl implements ProductService
-{
-
+public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
     private final Environment environment;
@@ -24,16 +22,16 @@ public class ProductServiceImpl implements ProductService
     @Transactional(readOnly = true)
     public List<Product> findAll() {
         return ((List<Product>) repository.findAll()).stream().map(product -> {
-            product.setPort(Integer.parseInt(environment.getProperty("local.server.port")));
+            product.setPort(Integer.parseInt(Objects.requireNonNull(environment.getProperty("local.server.port"))));
             return product;
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Product> findById(Long id) {
         return repository.findById(id).map(product -> {
-            product.setPort(Integer.parseInt(environment.getProperty("local.server.port")));
+            product.setPort(Integer.parseInt(Objects.requireNonNull(environment.getProperty("local.server.port"))));
             return product;
         });
     }
